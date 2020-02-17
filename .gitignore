@@ -1,0 +1,27 @@
+# os, ide
+._*
+*~
+.DS_Store
+Desktop.ini
+.smbdelete*
+nbproject/
+.idea/*
+
+# configs
+hash_ver.cfg
+phinx.yml
+cdb/config.php
+
+# build, log
+controllers/crontab/logs
+controllers/cron/xml/*
+log/
+*.log
+*.pid
+*.csv
+.phpunit.result.cache
+
+# web
+web/
+
+vendor/
