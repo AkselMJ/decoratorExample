@@ -3,8 +3,9 @@
 
 Для запускаа нужно обновить композер  
 Обычное выполнение php ./src/run.php  
-Для класического юнит теста нужно обновить композер и выполнить vendor\bin\phpunit tests  
+Для класического юнит теста нужно обновить композер и выполнить ./vendor/bin/phpunit tests  
 Используемая версия php 8.1.13  
 
 Для того чтобы не настраивать окружение можно воспользоваться docker образом, который одновременно выступает примером:  
-https://hub.docker.com/repository/docker/akselmj/decorator-example
+https://hub.docker.com/repository/docker/akselmj/decorator-example  
+Папка с проектом /app/decoratorExample
