@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace tests;
 
-use HttpClient;
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Provider\CachePool;
 use Provider\DataProvider;
@@ -11,6 +12,7 @@ use Provider\Decorator\CachedDataProvider;
 use Provider\Decorator\LoggedDataProvider;
 use Provider\External\CityInfoServiceDataProvider;
 use Provider\LoggerProvider;
+use RequestFactory;
 use UserRequest;
 
 /**
@@ -40,13 +42,13 @@ class ServiceTest extends TestCase
 	 */
 	public function testGetCache(array $data, array $referenceValue): void
 	{
-		$httpHelper = new HttpClient();
+		$httpClient = new Client([
+			RequestOptions::TIMEOUT => 3
+		]);
 
-		$options = [
-			HttpClient::TIMEOUT => 3,
-		];
+		$httpRequestFactory = new RequestFactory();
 
-		$service = new CityInfoServiceDataProvider($httpHelper, $options);
+		$service = new CityInfoServiceDataProvider($httpClient, $httpRequestFactory);
 		$dataProvider = new DataProvider($service);
 
 		$logger = new LoggerProvider();

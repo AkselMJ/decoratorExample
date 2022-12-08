@@ -1,5 +1,7 @@
 <?php
 
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Provider\CachePool;
 use Provider\DataProvider;
 use Provider\Decorator\CachedDataProvider;
@@ -9,13 +11,13 @@ use Provider\LoggerProvider;
 
 require __DIR__ . "/../vendor/autoload.php";
 
-$httpHelper = new HttpClient();
+$httpClient = new Client([
+	RequestOptions::TIMEOUT => 3
+]);
 
-$options = [
-	HttpClient::TIMEOUT => 3,
-];
+$httpRequestFactory = new RequestFactory();
 
-$service = new CityInfoServiceDataProvider($httpHelper, $options);
+$service = new CityInfoServiceDataProvider($httpClient, $httpRequestFactory);
 $dataProvider = new DataProvider($service);
 
 $logger = new LoggerProvider();

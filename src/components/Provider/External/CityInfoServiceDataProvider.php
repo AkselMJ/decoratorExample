@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Provider\External;
 
-use HttpClient;
 use Parser\HttpContentParser;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 
 /**
  * Получение данных в севисе городов
@@ -19,27 +20,25 @@ class CityInfoServiceDataProvider implements ServiceDataProviderInterface
 	/**
 	 * Обработчик запросов
 	 *
-	 * @var HttpClient
+	 * @var ClientInterface
 	 */
-	private HttpClient $client;
+	private ClientInterface $client;
 
 	/**
-	 * Настройки подключения
-	 *
-	 * @var array
+	 * @var RequestFactoryInterface
 	 */
-	private array $options;
+	private RequestFactoryInterface $requestFactory;
 
 	/**
 	 * Конструктор
 	 *
-	 * @param HttpClient $helper Обработчик запросов
-	 * @param array $options Опции запроса
+	 * @param ClientInterface $helper Обработчик запросов
+	 * @param RequestFactoryInterface $httpRequestFactory Фабрика для запросов по PSR
 	 */
-	public function __construct(HttpClient $helper, array $options)
+	public function __construct(ClientInterface $helper, RequestFactoryInterface $httpRequestFactory)
 	{
 		$this->client = $helper;
-		$this->options = $options;
+		$this->requestFactory = $httpRequestFactory;
 	}
 
 	/**
@@ -49,16 +48,18 @@ class CityInfoServiceDataProvider implements ServiceDataProviderInterface
 	 *
 	 * @return array
 	 * @throws \Exception
-	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 * @throws \Psr\Http\Client\ClientExceptionInterface
 	 */
 	public function getData(array $input): array
 	{
 		$city = $input['city'];
-		$this->client->setOptions($this->options);
 
-		$output = $this->client->request(self::CITY_SERVICE_URL);
+		$response = $this->client->sendRequest($this->requestFactory->createRequest("GET", self::CITY_SERVICE_URL));
 
-		$parser = new HttpContentParser($output, $this->client->contentType);
+		$output = $response->getBody()->getContents();
+		$contentType = $response->getHeader('Content-Type')[0];
+
+		$parser = new HttpContentParser($output, $contentType);
 		$data = $parser->parse();
 
 		return [$data[$city]];
